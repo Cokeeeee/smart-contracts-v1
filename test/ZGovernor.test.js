@@ -1,6 +1,6 @@
 const { expectRevert, time } = require('@openzeppelin/test-helpers');
 const ethers = require('ethers');
-const NiceToken = artifacts.require('NiceToken');
+const CokeToken = artifacts.require('CokeToken');
 const PoliceChief = artifacts.require('PoliceChief');
 const Timelock = artifacts.require('Timelock');
 const GovernorAlpha = artifacts.require('GovernorAlpha');
@@ -13,7 +13,7 @@ function encodeParameters(types, values) {
 
 contract('Governor', ([alice, minter, dev]) => {
     it('should work', async () => {
-        this.sushi = await NiceToken.new({ from: alice });
+        this.sushi = await CokeToken.new({ from: alice });
         await this.sushi.delegate(minter, { from: minter });
         this.chef = await PoliceChief.new(this.sushi.address, dev, '100', '0', '0', { from: alice });
         await this.sushi.transferOwnership(this.chef.address, { from: alice });

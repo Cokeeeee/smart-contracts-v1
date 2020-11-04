@@ -1,6 +1,6 @@
 const { expectRevert, time } = require('@openzeppelin/test-helpers');
 const ethers = require('ethers');
-const NiceToken = artifacts.require('NiceToken');
+const CokeToken = artifacts.require('CokeToken');
 const PoliceChief = artifacts.require('PoliceChief');
 const MockERC20 = artifacts.require('MockERC20');
 const Timelock = artifacts.require('Timelock');
@@ -12,7 +12,7 @@ function encodeParameters(types, values) {
 
 contract('Timelock', ([alice, bob, carol, dev, minter]) => {
     beforeEach(async () => {
-        this.sushi = await NiceToken.new({ from: alice });
+        this.sushi = await CokeToken.new({ from: alice });
         this.timelock = await Timelock.new(bob, '259200', { from: alice });
     });
 
