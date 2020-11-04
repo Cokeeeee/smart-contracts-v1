@@ -5,15 +5,15 @@ import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 
 // SushiToken with Governance.
-contract NiceToken is ERC20("NiceToken", "NICE"), Ownable {
-    // START OF NICE SPECIFIC CODE
+contract CokeToken is ERC20("CokeToken", "COKE"), Ownable {
+    // START OF COKE SPECIFIC CODE
 
-    // NICE is a copy of SUSHI https://etherscan.io/token/0x6b3595068778dd592e39a122f4f5a5cf09c90fe2
+    // COKE is a copy of SUSHI https://etherscan.io/token/0x6b3595068778dd592e39a122f4f5a5cf09c90fe2
     // except for the following code, which implements 
     // a burn percent on each transfer. The burn percent (burnDivisor) 
     // is set periodically and automatically by the 
     // contract owner (PoliceChief contract) to make sure
-    // NICE total supply remains pegged between 69 and 420
+    // COKE total supply remains pegged between 69 and 420
 
     // It also fixes the governance move delegate bug
     // https://medium.com/bulldax-finance/sushiswap-delegation-double-spending-bug-5adcc7b3830f
@@ -26,7 +26,7 @@ contract NiceToken is ERC20("NiceToken", "NICE"), Ownable {
     uint256 public totalSupplyBurned;
 
     function setBurnDivisor(uint256 _burnDivisor) public onlyOwner {
-        require(_burnDivisor > 3, "NICE::setBurnDivisor: burnDivisor must be bigger than 3"); // 100 / 4 == 25% max burn
+        require(_burnDivisor > 3, "burnDivisor must be bigger than 3"); // 100 / 4 == 25% max burn
         burnDivisor = _burnDivisor;
     }
 
@@ -205,7 +205,7 @@ contract NiceToken is ERC20("NiceToken", "NICE"), Ownable {
         view
         returns (uint256)
     {
-        require(blockNumber < block.number, "SUSHI::getPriorVotes: not yet determined");
+        require(blockNumber < block.number, "not yet determined");
 
         uint32 nCheckpoints = numCheckpoints[account];
         if (nCheckpoints == 0) {
@@ -278,7 +278,7 @@ contract NiceToken is ERC20("NiceToken", "NICE"), Ownable {
     )
         internal
     {
-        uint32 blockNumber = safe32(block.number, "SUSHI::_writeCheckpoint: block number exceeds 32 bits");
+        uint32 blockNumber = safe32(block.number, "block number exceeds 32 bits");
 
         if (nCheckpoints > 0 && checkpoints[delegatee][nCheckpoints - 1].fromBlock == blockNumber) {
             checkpoints[delegatee][nCheckpoints - 1].votes = newVotes;

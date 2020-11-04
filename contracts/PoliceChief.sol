@@ -6,18 +6,18 @@ import "@openzeppelin/contracts/token/ERC20/SafeERC20.sol";
 import "@openzeppelin/contracts/utils/EnumerableSet.sol";
 import "@openzeppelin/contracts/math/SafeMath.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
-import "./NiceToken.sol";
+import "./CokeToken.sol";
 
 /* START OF POLICE CHIEF EXPLANATION
 
 PoliceChief is a copy of SushiSwap's MasterChef 
 https://etherscan.io/address/0xc2edad668740f1aa35e4d8f227fb8e17dca888cd
-with a few differences, all annoted with the comment "NICE EDIT"
+with a few differences, all annoted with the comment "COKE EDIT"
 to make it easy to verify that it is a copy.
 
 Difference 1:
 
-When the supply goes above 420, NICE burn rates are increased 
+When the supply goes above 420, COKE burn rates are increased 
 dramatically and emissions cut, and when supply goes below 69, 
 emissions are increased dramatically and burn rates cut, 
 resulting in a token that has a total supply pegged between 
@@ -25,7 +25,7 @@ resulting in a token that has a total supply pegged between
 
 Difference 2:
 
-The dev fund is set to 0.69% (nice) instead of 10%, so
+The dev fund is set to 0.69% (COKE) instead of 10%, so
 no rug pulls.
 
 Difference 3:
@@ -39,7 +39,7 @@ not endanger your LP https://twitter.com/Quantstamp/status/1301280991021993984
 Emissions:
 
 The initial sushi per block is set to 5000000000000000 (0.005)
-NICE per block, which leads to ~420 NICE very 2 weeks.
+COKE per block, which leads to ~420 COKE very 2 weeks.
 
 END OF POLICE CHIEF EXPLANATION */
 
@@ -79,11 +79,11 @@ contract PoliceChief is Ownable {
         uint256 accSushiPerShare; // Accumulated SUSHIs per share, times 1e12. See below.
     }
 
-    // NICE EDIT: Use NiceToken instead of SushiToken
+    // COKE EDIT: Use CokeToken instead of SushiToken
     // The SUSHI TOKEN!
-    NiceToken public sushi;
+    CokeToken public sushi;
 
-    // NICE EDIT: Set the dev fund to 0.69% (nice) instead of 10%
+    // COKE EDIT: Set the dev fund to 0.69% (coke) instead of 10%
     // Dev address.
     address public devaddr;
 
@@ -93,7 +93,7 @@ contract PoliceChief is Ownable {
     uint256 public sushiPerBlock;
     // Bonus muliplier for early sushi makers.
     uint256 public constant BONUS_MULTIPLIER = 10;
-    // NICE EDIT: Remove migrator to protect LP tokens
+    // COKE EDIT: Remove migrator to protect LP tokens
     // The migrator contract. It has a lot of power. Can only be set through governance (owner).
     // IMigratorChef public migrator;
 
@@ -110,21 +110,21 @@ contract PoliceChief is Ownable {
     event Withdraw(address indexed user, uint256 indexed pid, uint256 amount);
     event EmergencyWithdraw(address indexed user, uint256 indexed pid, uint256 amount);
 
-    // NICE EDIT: Don't add same pool twice https://twitter.com/Quantstamp/status/1301280989906231296
+    // COKE EDIT: Don't add same pool twice https://twitter.com/Quantstamp/status/1301280989906231296
     mapping (address => bool) private poolIsAdded;
 
-    // NICE EDIT: If isInflating is true supply has not yet reached 420 and NICE is inflating
+    // COKE EDIT: If isInflating is true supply has not yet reached 420 and COKE is inflating
     bool public isInflating = true;
 
-    // NICE EDIT: Divide mint by this number during deflation periods
+    // COKE EDIT: Divide mint by this number during deflation periods
     uint256 public deflationMintDivisor = 100;
 
-    // NICE EDIT: Burn this amount per transaction during inflation/deflation periods
+    // COKE EDIT: Burn this amount per transaction during inflation/deflation periods
     // those are defaults and can be safely changed by governance with setDivisors
     uint256 public deflationBurnDivisor = 5; // 100 / 5 == 20%
     uint256 public inflationBurnDivisor = 100; // 100 / 100 == 1%
 
-    // NICE EDIT: Allow governance to adjust mint and burn rates during 
+    // COKE EDIT: Allow governance to adjust mint and burn rates during 
     // defation periods in case it's too low / too high, not a dangerous function
     function setDivisors(uint256 _deflationMintDivisor, uint256 _deflationBurnDivisor, uint256 _inflationBurnDivisor) public onlyOwner {
         require(_deflationMintDivisor > 0, "setDivisors: deflationMintDivisor must be bigger than 0");
@@ -144,7 +144,7 @@ contract PoliceChief is Ownable {
         }
     }
 
-    // NICE EDIT: Call this function every pool update, if total supply
+    // COKE EDIT: Call this function every pool update, if total supply
     // is above 420, start deflation, if under 69, start inflation
     function updateIsInflating() public {
         // was inflating, should start deflating
@@ -159,9 +159,9 @@ contract PoliceChief is Ownable {
         }
     }
 
-    // NICE EDIT: Read only util function for easier access from website, never called internally
-    function niceBalancePendingHarvest(address _user) public view returns (uint256) {
-        uint256 totalPendingNice = 0;
+    // COKE EDIT: Read only util function for easier access from website, never called internally
+    function cokeBalancePendingHarvest(address _user) public view returns (uint256) {
+        uint256 totalPendingCoke = 0;
         uint256 poolCount = poolInfo.length;
         for (uint256 pid = 0; pid < poolCount; ++pid) {
             PoolInfo storage pool = poolInfo[pid];
@@ -176,14 +176,14 @@ contract PoliceChief is Ownable {
                 }
                 accSushiPerShare = accSushiPerShare.add(sushiReward.mul(1e12).div(lpSupply));
             }
-            totalPendingNice = totalPendingNice.add(user.amount.mul(accSushiPerShare).div(1e12).sub(user.rewardDebt));
+            totalPendingCoke = totalPendingCoke.add(user.amount.mul(accSushiPerShare).div(1e12).sub(user.rewardDebt));
         }
-        return totalPendingNice;
+        return totalPendingCoke;
     }
 
-    // NICE EDIT: Read only util function for easier access from website, never called internally
-    function niceBalanceStaked(address _user) public view returns (uint256) {
-        uint256 totalNiceStaked = 0;
+    // COKE EDIT: Read only util function for easier access from website, never called internally
+    function cokeBalanceStaked(address _user) public view returns (uint256) {
+        uint256 totalCokeStaked = 0;
         uint256 poolCount = poolInfo.length;
         for (uint256 pid = 0; pid < poolCount; ++pid) {
             UserInfo storage user = userInfo[pid][_user];
@@ -191,24 +191,24 @@ contract PoliceChief is Ownable {
                 continue;
             }
             PoolInfo storage pool = poolInfo[pid];
-            uint256 uniswapPairNiceBalance = sushi.balanceOf(address(pool.lpToken));
-            if (uniswapPairNiceBalance == 0) {
+            uint256 uniswapPairCokeBalance = sushi.balanceOf(address(pool.lpToken));
+            if (uniswapPairCokeBalance == 0) {
                 continue;
             }
             uint256 userPercentOfLpOwned = user.amount.mul(1e12).div(pool.lpToken.totalSupply());
-            totalNiceStaked = totalNiceStaked.add(uniswapPairNiceBalance.mul(userPercentOfLpOwned).div(1e12));
+            totalCokeStaked = totalCokeStaked.add(uniswapPairCokeBalance.mul(userPercentOfLpOwned).div(1e12));
         }
-        return totalNiceStaked;
+        return totalCokeStaked;
     }
 
-    // NICE EDIT: Read only util function for easier access from website, never called internally
-    function niceBalanceAll(address _user) external view returns (uint256) {
-        return sushi.balanceOf(_user).add(niceBalanceStaked(_user)).add(niceBalancePendingHarvest(_user));
+    // COKE EDIT: Read only util function for easier access from website, never called internally
+    function cokeBalanceAll(address _user) external view returns (uint256) {
+        return sushi.balanceOf(_user).add(cokeBalanceStaked(_user)).add(cokeBalancePendingHarvest(_user));
     }
 
     constructor(
-        // NICE EDIT: Use NiceToken instead of SushiToken
-        NiceToken _sushi,
+        // COKE EDIT: Use CokeToken instead of SushiToken
+        CokeToken _sushi,
         address _devaddr,
         uint256 _sushiPerBlock,
         uint256 _startBlock,
@@ -228,7 +228,7 @@ contract PoliceChief is Ownable {
     // Add a new lp to the pool. Can only be called by the owner.
     // XXX DO NOT add the same LP token more than once. Rewards will be messed up if you do.
     function add(uint256 _allocPoint, IERC20 _lpToken, bool _withUpdate) public onlyOwner {
-        // NICE EDIT: Don't add same pool twice https://twitter.com/Quantstamp/status/1301280989906231296
+        // COKE EDIT: Don't add same pool twice https://twitter.com/Quantstamp/status/1301280989906231296
         require(poolIsAdded[address(_lpToken)] == false, 'add: pool already added');
         poolIsAdded[address(_lpToken)] = true;
 
@@ -254,13 +254,13 @@ contract PoliceChief is Ownable {
         poolInfo[_pid].allocPoint = _allocPoint;
     }
 
-    // NICE EDIT: Remove migrator to protect LP tokens
+    // COKE EDIT: Remove migrator to protect LP tokens
     // Set the migrator contract. Can only be called by the owner.
     // function setMigrator(IMigratorChef _migrator) public onlyOwner {
     //     migrator = _migrator;
     // }
 
-    // NICE EDIT: Remove migrator to protect LP tokens
+    // COKE EDIT: Remove migrator to protect LP tokens
     // Migrate lp token to another lp contract. Can be called by anyone. We trust that migrator contract is good.
     // function migrate(uint256 _pid) public {
     //     require(address(migrator) != address(0), "migrate: no migrator");
@@ -296,7 +296,7 @@ contract PoliceChief is Ownable {
             uint256 multiplier = getMultiplier(pool.lastRewardBlock, block.number);
             uint256 sushiReward = multiplier.mul(sushiPerBlock).mul(pool.allocPoint).div(totalAllocPoint);
 
-            // NICE EDIT: During deflation periods, cut the reward by the deflationMintDivisor amount
+            // COKE EDIT: During deflation periods, cut the reward by the deflationMintDivisor amount
             if (!isInflating) {
                 sushiReward = sushiReward.div(deflationMintDivisor);
             }
@@ -316,7 +316,7 @@ contract PoliceChief is Ownable {
 
     // Update reward variables of the given pool to be up-to-date.
     function updatePool(uint256 _pid) public {
-        // NICE EDIT: If total supply is above 420, start deflation, if under 69, start inflation
+        // COKE EDIT: If total supply is above 420, start deflation, if under 69, start inflation
         updateIsInflating();
 
         PoolInfo storage pool = poolInfo[_pid];
@@ -332,12 +332,12 @@ contract PoliceChief is Ownable {
         uint256 multiplier = getMultiplier(pool.lastRewardBlock, block.number);
         uint256 sushiReward = multiplier.mul(sushiPerBlock).mul(pool.allocPoint).div(totalAllocPoint);
 
-        // NICE EDIT: During deflation periods, cut the reward by the deflationMintDivisor amount
+        // COKE EDIT: During deflation periods, cut the reward by the deflationMintDivisor amount
         if (!isInflating) {
             sushiReward = sushiReward.div(deflationMintDivisor);
         }
 
-        // NICE EDIT: Set the dev fund to 0.69% (nice)
+        // COKE EDIT: Set the dev fund to 0.69% (coke)
         sushi.mint(devaddr, sushiReward.div(144)); // 100 / 144 == 0.694444444
         // sushi.mint(devaddr, sushiReward.div(10));
 
@@ -396,7 +396,7 @@ contract PoliceChief is Ownable {
     }
 
     function dev(address _devaddr) public {
-        // NICE EDIT: Minting to 0 address reverts and breaks harvesting
+        // COKE EDIT: Minting to 0 address reverts and breaks harvesting
         require(_devaddr != address(0), "dev: don't set to 0 address");
         require(msg.sender == devaddr, "dev: wut?");
         devaddr = _devaddr;
