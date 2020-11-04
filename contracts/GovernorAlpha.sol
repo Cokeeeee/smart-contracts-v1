@@ -13,12 +13,12 @@
 pragma solidity ^0.6.2;
 pragma experimental ABIEncoderV2;
 
-import "./NiceToken.sol";
+import "./CokeToken.sol";
 
 contract GovernorAlpha {
     /// @notice The name of this contract
     // XXX: string public constant name = "Compound Governor Alpha";
-    string public constant name = "Nice Governor Alpha";
+    string public constant name = "Coke Governor Alpha";
 
     /// @notice The number of votes in support of a proposal required in order for a quorum to be reached and for a vote to succeed
     // XXX: function quorumVotes() public pure returns (uint) { return 400000e18; } // 400,000 = 4% of Comp
@@ -42,7 +42,7 @@ contract GovernorAlpha {
 
     /// @notice The address of the Compound governance token
     // XXX: CompInterface public comp;
-    NiceToken public sushi;
+    CokeToken public sushi;
 
     /// @notice The address of the Governor Guardian
     address public guardian;
@@ -147,7 +147,7 @@ contract GovernorAlpha {
 
     constructor(address timelock_, address sushi_, address guardian_) public {
         timelock = TimelockInterface(timelock_);
-        sushi = NiceToken(sushi_);
+        sushi = CokeToken(sushi_);
         guardian = guardian_;
     }
 
